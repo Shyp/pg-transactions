@@ -1,3 +1,5 @@
+// Copyright 2015 Shyp, Inc.
+//
 // Stub of a metrics library. You should replace this with an implementation
 // that's connected to your own metrics system.
 module.exports = {

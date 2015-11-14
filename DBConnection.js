@@ -1,4 +1,6 @@
 /*
+ * Copyright 2015 Shyp, Inc.
+ *
  * Database connection interface modeled heavily on Go's database/sql library.
  *
  * If you need to make a query, call:

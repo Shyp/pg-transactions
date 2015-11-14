@@ -1,4 +1,6 @@
 /*
+ * Copyright 2015 Shyp, Inc.
+ *
  * Transaction interface heavily based on Go's database/sql library
  *
  * Get a transaction

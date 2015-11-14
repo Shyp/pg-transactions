@@ -1,3 +1,4 @@
+// Copyright 2015 Shyp, Inc
 var pg = require('pg');
 var should = require('should');
 

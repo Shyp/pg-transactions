@@ -1,3 +1,4 @@
+// Copyright 2015 Shyp, Inc.
 var should = require('should');
 var sinon = require('sinon');
 
