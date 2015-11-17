@@ -3,15 +3,22 @@
 This is a Javascript library modeled heavily on the DBConnection interface in
 C#, and Go's database/sql library.
 
-What are transactions? At a basic level, they let you make updates to
-multiple records and guarantee that they all succeed or all fail. This is an
-exceptionally valuable property for guaranteeing the consistency of your data,
-and one that many NoSQL databases (like MongoDB) cannot provide.
+[What are transactions?][txns] At a basic level, they let you update multiple
+records (or multiple tables) and guarantee that all of the updates succeed
+or all of them fail. They also ensure the rest of your application can't see
+the transaction's intermediate states - they can see all of the data (when
+the transaction is committed) or none of it. These are exceptionally valuable
+properties for guaranteeing the consistency of your data - **properties that
+many NoSQL databases (like MongoDB) cannot provide**.
+
+[txns]: http://www.postgresql.org/docs/9.3/static/tutorial-transactions.html
 
 The quintessential example is updating two bank records; say I want to
-decrement User A's balance by ten dollars and increment User B's balance by ten
-dollars. I *really* want those updates to both succeed or both fail, otherwise
-I can end up with an inconsistent amount of money in the system!
+decrement User A's balance by ten dollars and increment User B's balance by
+ten dollars. I *really* want those updates to both succeed or both fail, and
+I *really* want to make sure I can never read a partially applied balance
+transaction, otherwise I can end up with an inconsistent amount of money in the
+system!
 
 We use them in several places at [Shyp](https://www.shyp.com). When we assign
 a pickup to a driver, we want to update the pickup (so it can't be assigned
@@ -114,14 +121,27 @@ user, on localhost, with no password).
 
 We'll accept pull requests for:
 
-- Setting the transaction isolation level! [Read skew, write skew][levels], etc.
-- Configuring the database connection in tests.
+- Setting the transaction isolation level! [Defending against read skew, write skew][levels], etc.
+- Configuring the database connection in tests - setting the database user or
+  password.
 - Correctness errors.
+- We've observed an issue where [a percentage of our transactions queries log
+'This socket has been ended by the other party' errors on disconnect][error].
+We observe the transaction was aborted, though we don't understand why we're
+getting it. In production we run node-postgres behind PGBouncer, which may be
+causing this issue.
+
+[error]: https://github.com/brianc/node-postgres/issues/725
 
 We're unlikely to accept pull requests for:
 
 - Making connections to other backing datastores; you should steal this
   interface and most of the code and release your own library!
+- Support for any particular ORM, if it would involve changing the interface
+  presented here.
+- Grunt/Gulp/editorconfig/other JS lint or build tools.
+- Nested transactions or save points; if you need this behavior, you can do it
+by running `txn.query('SAVEPOINT')` or `txn.query('ROLLBACK TO SAVEPOINT')`.
 
 [levels]: https://martin.kleppmann.com/2015/09/26/transactions-at-strange-loop.html
 
@@ -130,4 +150,4 @@ We're unlikely to accept pull requests for:
 This library should be widely compatible with the `node-postgres` library; it
 depends on the `pg.connect(config, (err, client, release)` interface, and the
 `client.query(sql, values, callback)` interface. Tests run against the latest
-version of `node-postgres`.
+released version of `node-postgres`.
