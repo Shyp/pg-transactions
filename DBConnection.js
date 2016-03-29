@@ -68,7 +68,7 @@ DBConnection.get = function(config, cb) {
     try {
       var poolUtilization = DBConnection._getPoolUtilization();
       Metrics.measure('db.txn_conn_pool.count', poolUtilization);
-    } catch (undefined) {}
+    } catch (e) {}
     Metrics.measure('db.txn_conn_pool.total', pg.defaults.poolSize);
     Metrics.increment('db.txn_conn_pool.get');
     Metrics.timing('db.txn_conn_pool.get.latency', start);

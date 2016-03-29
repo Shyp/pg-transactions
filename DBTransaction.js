@@ -37,7 +37,7 @@ var Metrics = require('./Metrics');
 
 module.exports = DBTransaction = function (conn) {
   this.conn = conn;
-}
+};
 
 DBTransaction.prototype.rollback = function(cb) {
   var that = this;
